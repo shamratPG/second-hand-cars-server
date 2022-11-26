@@ -20,9 +20,24 @@ async function run() {
         const userCollection = database.collection('userCollection');
 
         app.get('/users', async (req, res) => {
-            const query = {};
+            const role = req.query.role;
+            const query = { role: role };
             const users = await userCollection.find(query).toArray();
             res.send(users)
+        })
+
+        // Checks if user already exist
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await userCollection.findOne(query);
+            res.send(user)
+        })
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const newUser = await userCollection.insertOne(user);
+            res.send(newUser);
         })
     }
     finally {
