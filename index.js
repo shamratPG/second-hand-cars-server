@@ -59,16 +59,24 @@ async function run() {
 
         // Get Products (by categories also)
         app.get('/products', async (req, res) => {
-            const category = req?.query?.category;
-            console.log(category);
-            if (category) {
-                const query = { category };
+            const categoryId = req?.query?.categoryId;
+            console.log(categoryId);
+            if (categoryId) {
+                const query = { categoryId };
                 const products = await productCollection.find(query).toArray();
                 return res.send(products)
             }
             const query = {};
             const products = await productCollection.find(query).toArray();
             res.send(products)
+        })
+
+        // Get product of all seller
+        app.get('/products/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { sellerEmail: email };
+            const product = await productCollection.find(query).toArray();
+            res.send(product)
         })
 
         // Add New Product
