@@ -36,7 +36,15 @@ async function run() {
 
         app.post('/users', async (req, res) => {
             const user = req.body;
+            const query = { email: user?.email }
+            console.log(query)
+            const alreadyUser = await userCollection.find(query).toArray();
+            console.log(alreadyUser.length)
+            if (alreadyUser.length) {
+                return res.send({ acknowledged: false });
+            }
             const newUser = await userCollection.insertOne(user);
+            console.log(newUser)
             res.send(newUser);
         })
     }
