@@ -28,26 +28,32 @@ async function run() {
         })
 
         // Get all user by their role
-        app.get('/users', async (req, res) => {
-            const role = req.query.role;
-            const query = { role };
+        app.get('/users/:info', async (req, res) => {
+            const info = req.params.info;
+            if (info.includes('@')) {
+                console.log(info)
+                const query = { email: info };
+                const user = await userCollection.findOne(query);
+                return res.send(user);
+            }
+            console.log(info)
+            const query = { role: info };
             const users = await userCollection.find(query).toArray();
             res.send(users)
         })
 
         // Get single user by email
-        app.get('/users/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email };
-            const user = await userCollection.findOne(query);
-            res.send(user)
-        })
+        // app.get('/users', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = { email };
+        //     const user = await userCollection.findOne(query);
+        //     res.send(user)
+        // })
 
         // Add New User
         app.post('/users', async (req, res) => {
             const user = req.body;
             const query = { email: user?.email }
-
             const alreadyUser = await userCollection.find(query).toArray();
             if (alreadyUser.length) {
                 return res.send({ acknowledged: false });
@@ -60,7 +66,6 @@ async function run() {
         // Get Products (by categories also)
         app.get('/products', async (req, res) => {
             const categoryId = req?.query?.categoryId;
-            console.log(categoryId);
             if (categoryId) {
                 const query = { categoryId };
                 const products = await productCollection.find(query).toArray();
