@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
@@ -31,12 +31,10 @@ async function run() {
         app.get('/users/:info', async (req, res) => {
             const info = req.params.info;
             if (info.includes('@')) {
-                console.log(info)
                 const query = { email: info };
                 const user = await userCollection.findOne(query);
                 return res.send(user);
             }
-            console.log(info)
             const query = { role: info };
             const users = await userCollection.find(query).toArray();
             res.send(users)
