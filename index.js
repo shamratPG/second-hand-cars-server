@@ -19,6 +19,7 @@ async function run() {
         const database = client.db('secondHandCars');
         const userCollection = database.collection('userCollection');
         const productCollection = database.collection('productCollection');
+        const bookingCollection = database.collection('bookingCollection');
 
         // Get all users 
         app.get('/users', async (req, res) => {
@@ -88,6 +89,20 @@ async function run() {
             const result = await productCollection.insertOne(product);
             res.send(result);
         });
+
+        //Get All the bookings
+        app.get('/bookings', async (req, res) => {
+            const query = {};
+            const result = await bookingCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        // Add A Booking
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            result = await bookingCollection.insertOne(booking);
+            res.send(result);
+        })
     }
     finally {
 
