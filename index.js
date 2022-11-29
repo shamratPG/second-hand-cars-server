@@ -61,6 +61,41 @@ async function run() {
             res.send(newUser);
         })
 
+        //Delete User
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        //Update Seller Verification
+        app.put('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true }
+            const updateUser = {
+                $set: {
+                    verified: true
+                }
+            }
+            const result = await userCollection.updateOne(query, updateUser, options);
+            res.send(result);
+        })
+
+        //Update user to make him as an admin
+        app.put('/users/admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            console.log(id)
+            const updateUser = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await userCollection.updateOne(query, updateUser);
+            res.send(result);
+        })
 
         // Get Products (by categories also)
         app.get('/products', async (req, res) => {
@@ -75,7 +110,16 @@ async function run() {
             res.send(products)
         })
 
-        // Get product of all seller
+
+        app.get('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.findOne(query)
+            res.send(result)
+        })
+
+        // Get product of a seller
         app.get('/products/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { sellerEmail: email };
@@ -124,7 +168,6 @@ async function run() {
         })
 
 
-
         //Delete One Product
         app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -134,8 +177,9 @@ async function run() {
         })
 
         //Get All the bookings
-        app.get('/bookings', async (req, res) => {
-            const query = {};
+        app.get('/bookings/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { buyerEmail: email };
             const result = await bookingCollection.find(query).toArray();
             res.send(result);
         })
