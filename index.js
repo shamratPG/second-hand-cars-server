@@ -78,7 +78,6 @@ async function run() {
         // Get product of all seller
         app.get('/products/seller/:email', async (req, res) => {
             const email = req.params.email;
-            console.log(email)
             const query = { sellerEmail: email };
             const product = await productCollection.find(query).toArray();
             res.send(product)
@@ -87,7 +86,6 @@ async function run() {
         //Getting All the Advertised Items
         app.get('/products/ads', async (req, res) => {
             const query = { status: 'advertised' };
-            console.log('query')
             const result = await productCollection.find(query).toArray();
             res.send(result)
         })
@@ -111,6 +109,21 @@ async function run() {
             const result = await productCollection.updateOne(query, updatedProduct);
             res.send(result);
         })
+
+        //Stop Advertise 
+        app.put('/products/stopads/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const updatedProduct = {
+                $set: {
+                    status: 'unsold'
+                }
+            }
+            const result = await productCollection.updateOne(query, updatedProduct);
+            res.send(result);
+        })
+
+
 
         //Delete One Product
         app.delete('/products/:id', async (req, res) => {
