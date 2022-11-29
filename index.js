@@ -76,11 +76,20 @@ async function run() {
         })
 
         // Get product of all seller
-        app.get('/products/:email', async (req, res) => {
+        app.get('/products/seller/:email', async (req, res) => {
             const email = req.params.email;
+            console.log(email)
             const query = { sellerEmail: email };
             const product = await productCollection.find(query).toArray();
             res.send(product)
+        })
+
+        //Getting All the Advertised Items
+        app.get('/products/ads', async (req, res) => {
+            const query = { status: 'advertised' };
+            console.log('query')
+            const result = await productCollection.find(query).toArray();
+            res.send(result)
         })
 
         // Add New Product
@@ -89,6 +98,27 @@ async function run() {
             const result = await productCollection.insertOne(product);
             res.send(result);
         });
+
+        //Update Product Status
+        app.put('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const updatedProduct = {
+                $set: {
+                    status: 'advertised'
+                }
+            }
+            const result = await productCollection.updateOne(query, updatedProduct);
+            res.send(result);
+        })
+
+        //Delete One Product
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
 
         //Get All the bookings
         app.get('/bookings', async (req, res) => {
