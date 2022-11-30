@@ -9,9 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.pra9xm3.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
@@ -20,6 +17,7 @@ async function run() {
         const userCollection = database.collection('userCollection');
         const productCollection = database.collection('productCollection');
         const bookingCollection = database.collection('bookingCollection');
+        const blogCollection = database.collection('blogCollection');
 
         // Get all users 
         app.get('/users', async (req, res) => {
@@ -40,14 +38,6 @@ async function run() {
             const users = await userCollection.find(query).toArray();
             res.send(users)
         })
-
-        // Get single user by email
-        // app.get('/users', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = { email };
-        //     const user = await userCollection.findOne(query);
-        //     res.send(user)
-        // })
 
         // Add New User
         app.post('/users', async (req, res) => {
@@ -189,6 +179,13 @@ async function run() {
             const booking = req.body;
             result = await bookingCollection.insertOne(booking);
             res.send(result);
+        })
+
+        // Get all Blogs
+        app.get('/blogs', async (req, res) => {
+            const query = {}
+            const blogs = await blogCollection.find(query).toArray();
+            res.send(blogs);
         })
     }
     finally {
